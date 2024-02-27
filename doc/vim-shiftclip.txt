@@ -1,0 +1,284 @@
+*vim-shiftclip.txt*	Block alignment for the Vim text editor
+*vim-shiftclip*
+
+  ___ _    _  __ _      _ _       ~
+ / __| |_ (_)/ _| |_ __| (_)_ __  ~
+ \__ \ ' \| |  _|  _/ _| | | '_ \ ~
+ |___/_||_|_|_|  \__\__|_|_| .__/ ~
+                           |_|    ~
+
+Author: Zachary Krepelka
+Date:   Sunday, February 25th, 2024
+
+Origin:   https://github.com/zachary-krepelka/vim-shiftclip
+
+================================================================================
+
+TABLE OF CONTENTS 0                                *vim-shiftclip-contents* {{{1
+
+1. Introduction   ....................................   |vim-shiftclip-intro|
+2. Usage   ...........................................   |vim-shiftclip-usage|
+3. Example   .........................................   |vim-shiftclip-example|
+4. Remarks   .........................................   |vim-shiftclip-remarks|
+
+================================================================================
+
+INTRODUCTION      1                                   *vim-shiftclip-intro* {{{1
+
+This plugin provides facilities to align a body of text to the left, right, or
+center while respecting the structure of that text.
+
+The Problem~
+
+Vim already supports alignment with its built-in |formatting| commands |left|,
+|right| and |center|, but as we will see, these are insufficient for our
+purposes.  Let us begin with a demonstration of the deficiency that this plugin
+aims to resolve.  It will be observed that these commands operate on lines in a
+range independently of other lines in that range.  Let's imagine that we have a
+block of text in a Vim buffer.  >
+
+                +---------------------------------------------+
+                |  1                                          |
+                |  2        >>\.                              |
+                |  3       /_  )`.                            |
+                |  4      /  _)`^)`.   _.---. _               |
+                |  5     (_,' \  `^-)""      `.\              |
+                |  6           |              | \             |
+                |  7           \              / |             |
+                |  8          / \  /.___.'\  (\ (_            |
+                |  9         < ,"||     \ |`. \`-'            |
+                | 10          \\ ()      )|  )/               |
+                | 11    hjw   |_>|>     /_] //                |
+                | 12          /_]        /_]                  |
+                |~                                            |
+                |~                                            |
+                |-- INSERT __                                 |
+                +---------------------------------------------+
+
+Try aligning the block using Vim's built-in |left| command. >
+
+                +---------------------------------------------+
+                |  1                                          |
+                |  2 >>\.                                     |
+                |  3 /_  )`.                                  |
+                |  4 /  _)`^)`.   _.---. _                    |
+                |  5 (_,' \  `^-)""      `.\                  |
+                |  6 |              | \                       |
+                |  7 \              / |                       |
+                |  8 / \  /.___.'\  (\ (_                     |
+                |  9 < ,"||     \ |`. \`-'                    |
+                | 10 \\ ()      )|  )/                        |
+                | 11 hjw   |_>|>     /_] //                   |
+                | 12 /_]        /_]                           |
+                |~                                            |
+                |~                                            |
+                |:'<,'>left                                   |
+                +---------------------------------------------+
+
+Try aligning the block using Vim's built-in |center| command. >
+
+                +---------------------------------------------+
+                |  1                                          |
+                |  2                  >>\.                    |
+                |  3                 /_  )`.                  |
+                |  4          /  _)`^)`.   _.---. _           |
+                |  5         (_,' \  `^-)""      `.\          |
+                |  6           |              | \             |
+                |  7           \              / |             |
+                |  8          / \  /.___.'\  (\ (_            |
+                |  9          < ,"||     \ |`. \`-'           |
+                | 10            \\ ()      )|  )/             |
+                | 11         hjw    |_>|>     /_] //          |
+                | 12             /_]        /_]               |
+                |~                                            |
+                |~                                            |
+                |:'<,'>center                                 |
+                +---------------------------------------------+
+
+Try aligning the block using Vim's built-in |right| command. >
+
+                +---------------------------------------------+
+                |  1                                          |
+                |  2                                     >>\. |
+                |  3                                  /_  )`. |
+                |  4                    /  _)`^)`.   _.---. _ |
+                |  5                  (_,' \  `^-)""      `.\ |
+                |  6                       |              | \ |
+                |  7                       \              / | |
+                |  8                     / \  /.___.'\  (\ (_ |
+                |  9                    < ,"||     \ |`. \`-' |
+                | 10                        \\ ()      )|  )/ |
+                | 11                   hjw   |_>|>     /_] // |
+                | 12                           /_]        /_] |
+                |~                                            |
+                |~                                            |
+                |:'<,'>right                                  |
+                +---------------------------------------------+
+
+The problem is clear. The |left|, |right|, and |center| commands each justify
+lines in their range of operation independently; lines are justified without
+respect to the other lines.  These commands work perfectly well in the manner
+that they are intended, so it may be a misnomer to call this a problem, but
+regardless, we desire a working solution to the proposed circumstance, i.e., we
+would like to align a body of text without deforming it.
+
+The Solution~
+
+This plugin is the solution.
+
+A well known rule of Vim is that all user-defined commands must start with an
+uppercase letter to distinguish them from builtin commands which mostly start
+with lowercase letters.  In that vein, we define three new custom commands
+|Left|, |Right|, and |Center| whose names differ from those of the builtin
+commands |left|, |right|, and |center| only in their capitalization.  The intent
+is for our custom commands to nicely parallel the builtin commands.  These three
+new custom commands implement the desired functionality.  As an aside, see
+|user-cmd-ambiguous| in the help files.
+
+================================================================================
+
+USAGE             2                                   *vim-shiftclip-usage* {{{1
+
+This plugin provides three commands for aligning blocks of text.  They are also
+available from the menu in gvim, under `Plugin -> Shiftclip -> command.`
+
+                                                                         *:Left*
+	:[range]Left [indent]
+
+			Left-align the block of text bound by [range],
+			preserving structure.  Then pad lines over [range] with
+			[indent] number of spaces.  |Left| is like |left|, but
+			smarter.
+
+				- The default [indent] is zero spaces.
+
+				- The default [range] is the current line.
+
+                                                                        *:Right*
+	:[range]Right [width]
+
+			Right-align the block of text bound by [range] at
+			[width] columns, preserving structure.  |Right| is like
+			|right|, but smarter.
+
+				- The default [width] is 'textwidth' or 80 when
+				  'textwidth' is 0.
+
+				- The default [range] is the current line.
+
+                                                                       *:Center*
+	:[range]Center [width]
+
+			Center-align the block of text bound by [range] between
+			[width] columns, preserving structure.  |Center| is like
+			|center|, but smarter.
+
+				- The default [width] is 'textwidth' or 80 when
+				  'textwidth' is 0.
+
+				- The default [range] is the current line.
+
+================================================================================
+
+EXAMPLE           3                                 *vim-shiftclip-example* {{{1
+
+To the Left <--~
+To align a body of text to the left,
+try the new and improved command |Left|. >
+    ,
+ _,,)\.~,,._
+ (()`  ``)\))),,_
+  |     \ ''((\)))),,_          ____
+  |6`   |   ''((\())) "-.____.-"    `-.-,
+  |    .'\    ''))))'                  \)))
+  |   |   `.     ''                     ((((
+  \, _)     \/                          |))))
+   `'        |                          (((((
+             \                  |       ))))))
+              `|    |           ,\     /((((((
+               |   / `-.______.<  \   |  )))))
+               |   |  /         `. \  \  ((((
+               |  / \ |           `.\  | (((
+               \  | | |             )| |  ))
+                | | | |            / | |  '
+                | | /_(           /_(/ /
+           hjw  /_(/__]           \_/_(
+               /__]                /__]
+<
+                  To the Center <-->~
+                  To align a body of text to the right,
+                  try the new and improved command |Right|. >
+                    ,
+                 _,,)\.~,,._
+                 (()`  ``)\))),,_
+                  |     \ ''((\)))),,_          ____
+                  |6`   |   ''((\())) "-.____.-"    `-.-,
+                  |    .'\    ''))))'                  \)))
+                  |   |   `.     ''                     ((((
+                  \, _)     \/                          |))))
+                   `'        |                          (((((
+                             \                  |       ))))))
+                              `|    |           ,\     /((((((
+                               |   / `-.______.<  \   |  )))))
+                               |   |  /         `. \  \  ((((
+                               |  / \ |           `.\  | (((
+                               \  | | |             )| |  ))
+                                | | | |            / | |  '
+                                | | /_(           /_(/ /
+                           hjw  /_(/__]           \_/_(
+                               /__]                /__]
+<
+                                    To the Right --> ~
+                                    To align a body of text to the center,
+                                    try the new and improved command |Center|. >
+                                      ,
+                                   _,,)\.~,,._
+                                   (()`  ``)\))),,_
+                                    |     \ ''((\)))),,_          ____
+                                    |6`   |   ''((\())) "-.____.-"    `-.-,
+                                    |    .'\    ''))))'                  \)))
+                                    |   |   `.     ''                     ((((
+                                    \, _)     \/                          |))))
+                                     `'        |                          (((((
+                                               \                  |       ))))))
+                                                `|    |           ,\     /((((((
+                                                 |   / `-.______.<  \   |  )))))
+                                                 |   |  /         `. \  \  ((((
+                                                 |  / \ |           `.\  | (((
+                                                 \  | | |             )| |  ))
+                                                  | | | |            / | |  '
+                                                  | | /_(           /_(/ /
+                                             hjw  /_(/__]           \_/_(
+                                                 /__]                /__]
+
+Copy the image into a new buffer and try the commands out for yourself.
+
+================================================================================
+
+REMARKS           4                                 *vim-shiftclip-remarks* {{{1
+
+Inspirations~
+
+This plugin was inspired by a Stack Overflow post.
+
+	https://stackoverflow.com/q/19328975
+
+For a while, I had this in my bashrc. >
+
+ shiftclip () {  #  Align a text snippet to the left
+
+ 	cut -c $(cat $1 | sed 's/[^ ].*//' | sort | head -n1 | wc -c)- $1
+
+ }
+
+This only works for left alignment.  I wanted something could align a block of
+text to the left, right, or center, so I wrote this plugin.
+
+Credits~
+
+The ASCII art in this file was created by Hayley Jane Wakenshaw (hjw).
+
+                  http://www.ascii-art.de/ascii/ghi/horse.txt
+
+================================================================================
+vim:tw=80:ts=8:ft=help:fdm=marker
