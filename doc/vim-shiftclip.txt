@@ -206,8 +206,8 @@ try the new and improved command |Left|. >
                /__]                /__]
 <
                   To the Center <-->~
-                  To align a body of text to the right,
-                  try the new and improved command |Right|. >
+                  To align a body of text to the center,
+                  try the new and improved command |Center|. >
                     ,
                  _,,)\.~,,._
                  (()`  ``)\))),,_
@@ -229,8 +229,8 @@ try the new and improved command |Left|. >
                                /__]                /__]
 <
                                     To the Right --> ~
-                                    To align a body of text to the center,
-                                    try the new and improved command |Center|. >
+                                    To align a body of text to the right,
+                                    try the new and improved command |Right|. >
                                       ,
                                    _,,)\.~,,._
                                    (()`  ``)\))),,_
@@ -271,8 +271,8 @@ For a while, I had this in my bashrc. >
 
  }
 
-This only works for left alignment.  I wanted something could align a block of
-text to the left, right, or center, so I wrote this plugin.
+This only works for left alignment.  I wanted something that could align a block
+of text to the left, right, or center, so I wrote this plugin.
 
 Credits~
 
@@ -281,4 +281,5 @@ The ASCII art in this file was created by Hayley Jane Wakenshaw (hjw).
                   http://www.ascii-art.de/ascii/ghi/horse.txt
 
 ================================================================================
+UPDATED: Saturday, April 13th, 2024 at 2:39 PM
 vim:tw=80:ts=8:ft=help:fdm=marker
