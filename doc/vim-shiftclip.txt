@@ -267,7 +267,7 @@ For a while, I had this in my bashrc. >
 
  shiftclip () {  #  Align a text snippet to the left
 
- 	cut -c $(cat $1 | sed 's/[^ ].*//' | sort | head -n1 | wc -c)- $1
+	cut -c $(sed 's/[^ ].*//' $1 | sort | head -n1 | wc -c)- $1;
 
  }
 
@@ -281,5 +281,5 @@ The ASCII art in this file was created by Hayley Jane Wakenshaw (hjw).
                   http://www.ascii-art.de/ascii/ghi/horse.txt
 
 ================================================================================
-UPDATED: Saturday, April 13th, 2024 at 2:39 PM
+UPDATED: Tuesday, April 8th, 2025 at 1:00 AM
 vim:tw=80:ts=8:ft=help:fdm=marker
