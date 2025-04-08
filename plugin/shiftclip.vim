@@ -3,6 +3,17 @@
 " DATE: Wednesday, February 21st, 2024
 " ABOUT: Block alignment for the Vim text editor
 " ORIGIN: https://github.com/zachary-krepelka/vim-shiftclip.git
+" UPDATED: Tuesday, April 8th, 2025 at 1:05 AM
+
+" Loading {{{1
+
+if exists("g:loaded_vim_shiftclip")
+
+	finish
+
+endif
+
+let g:loaded_vim_shiftclip = 1
 
 " Commands {{{1
 
